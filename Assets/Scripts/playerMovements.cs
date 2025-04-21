@@ -5,8 +5,8 @@ public class PlayerMovements : MonoBehaviour
     private Rigidbody2D myRigidBody2D;
     private BoxCollider2D myCapCollider2D;
     private Animator myAnimator;
-    [SerializeField] private float runSpeed = 10f;
-    [SerializeField] private float jumpSpeed = 10f;
+    [SerializeField] public float runSpeed = 10f;
+    [SerializeField] public float jumpSpeed = 10f;
     [SerializeField] private AudioSource meowAudioSource;
     public AudioClip swipe;
     [SerializeField] private AudioClip[] meowClips;
@@ -208,6 +208,18 @@ public class PlayerMovements : MonoBehaviour
                 leverScript.FlipSprite();
             }
         }
+
+        Collider2D[] breakables = Physics2D.OverlapCircleAll(hurtBox.position, attackRadius, LayerMask.GetMask("Breakable"));
+
+        foreach (Collider2D trash in breakables)
+        {
+            TrashcanInteraction trashcanScript = trash.GetComponent<TrashcanInteraction>();
+            if (trashcanScript != null)
+            {
+                trashcanScript.TakeHit();
+            }
+        }
+
     }
 
 
@@ -238,12 +250,10 @@ public class PlayerMovements : MonoBehaviour
     {
         isCrouching = false;
 
-        // Restore the correct collider
         myCapCollider2D.enabled = true;
         if (crouchCollider != null)
             crouchCollider.enabled = false;
 
-        // Reset crouching animation and animator speed
         myAnimator.SetBool("Crouching", false);
         myAnimator.speed = 1f;
     }

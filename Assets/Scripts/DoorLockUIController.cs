@@ -8,12 +8,14 @@ public class DoorLockUIController : MonoBehaviour
     [Header("UI Elements")]
     public Transform buttonContainer;
     public TMP_InputField inputField;
-    public TMP_Text feedbackText;
+    public GameObject feedbackText;
 
     [Header("Door & Password Settings")]
     public string correctPassword;
     public GameObject doorLockPanel;
     public BoxCollider2D doorCollider;
+
+    private bool canConfirm = true;
 
     private void Start()
     {
@@ -57,6 +59,8 @@ public class DoorLockUIController : MonoBehaviour
 
     public void Confirm()
     {
+        if (!canConfirm) return;
+
         if (inputField.text == correctPassword)
         {
             Destroy(doorLockPanel);
@@ -76,12 +80,12 @@ public class DoorLockUIController : MonoBehaviour
         }
     }
 
-
     private IEnumerator ShowIncorrectMessage()
     {
+        canConfirm = false;
         feedbackText.gameObject.SetActive(true);
-        feedbackText.text = "Incorrect password";
         yield return new WaitForSeconds(3f);
         feedbackText.gameObject.SetActive(false);
+        canConfirm = true;
     }
 }

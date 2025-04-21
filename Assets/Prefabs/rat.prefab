@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4381270342491696203}
   - component: {fileID: 4657069268589977027}
   - component: {fileID: 1088257931076548814}
-  m_Layer: 8
+  m_Layer: 15
   m_Name: rat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3668088059880859987}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -176,7 +176,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 152648ec3879cdf4e8a52b0a296f0e41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 6
+  conditionObject: {fileID: 0}
 --- !u!70 &1088257931076548814
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

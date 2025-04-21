@@ -1,8 +1,10 @@
 using UnityEngine;
-
 public class RatBehavior : MonoBehaviour
 {
-    public float speed = 2f;
+    public float speed = 6f;
+    public GameObject conditionObject;
+    private BoxCollider2D triggerCollider;
+
     private Transform player;
     private bool isFollowing = false;
     private Rigidbody2D myRigidBody2D;
@@ -12,25 +14,14 @@ public class RatBehavior : MonoBehaviour
         myRigidBody2D = GetComponent<Rigidbody2D>();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            player = other.transform;
-            isFollowing = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isFollowing = false;
-        }
-    }
-
     private void Update()
     {
+        // Enable the trigger collider once the condition object is destroyed
+        if (conditionObject == null && triggerCollider != null && !triggerCollider.enabled)
+        {
+            triggerCollider.enabled = true;
+        }
+
         if (isFollowing && player != null)
         {
             float playerInputX = Input.GetAxisRaw("Horizontal");
@@ -48,6 +39,23 @@ public class RatBehavior : MonoBehaviour
         else
         {
             myRigidBody2D.linearVelocity = Vector2.zero;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            player = other.transform;
+            isFollowing = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isFollowing = false;
         }
     }
 
