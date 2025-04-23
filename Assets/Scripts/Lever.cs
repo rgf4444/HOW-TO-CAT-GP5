@@ -4,7 +4,8 @@ public class Lever : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     [SerializeField] private GameObject objectToEnable;
-    private bool isLeverOn = false;
+    public bool isLeverOn = false;
+    public bool IsLeverOn => isLeverOn;
 
     void Start()
     {

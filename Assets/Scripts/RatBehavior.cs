@@ -1,71 +1,53 @@
 using UnityEngine;
 public class RatBehavior : MonoBehaviour
 {
-    public float speed = 6f;
-    public GameObject conditionObject;
-    private BoxCollider2D triggerCollider;
+    public Transform player; // Assign this in the Inspector or dynamically
+    public bool playerInRange = false;
+    public bool canFollow = false;
 
-    private Transform player;
-    private bool isFollowing = false;
-    private Rigidbody2D myRigidBody2D;
+    private SpriteRenderer spriteRenderer;
+    private float previousXPosition; // To store previous position for movement direction
 
     private void Start()
     {
-        myRigidBody2D = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        previousXPosition = transform.position.x; // Initial x position
     }
 
-    private void Update()
+    void Update()
     {
-        // Enable the trigger collider once the condition object is destroyed
-        if (conditionObject == null && triggerCollider != null && !triggerCollider.enabled)
+        if (playerInRange && canFollow)
         {
-            triggerCollider.enabled = true;
-        }
+            // Follow player on x-axis
+            Vector3 newPosition = transform.position;
+            newPosition.x = player.position.x;
+            transform.position = newPosition;
 
-        if (isFollowing && player != null)
-        {
-            float playerInputX = Input.GetAxisRaw("Horizontal");
-
-            if (playerInputX != 0)
-            {
-                myRigidBody2D.linearVelocity = new Vector2(playerInputX * speed, myRigidBody2D.linearVelocity.y);
-                FlipSprite();
-            }
-            else
-            {
-                myRigidBody2D.linearVelocity = new Vector2(0, myRigidBody2D.linearVelocity.y);
-            }
-        }
-        else
-        {
-            myRigidBody2D.linearVelocity = Vector2.zero;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            player = other.transform;
-            isFollowing = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isFollowing = false;
+            // Check movement direction and flip sprite accordingly
+            FlipSprite();
         }
     }
 
     private void FlipSprite()
     {
-        bool runningHorizontally = Mathf.Abs(myRigidBody2D.linearVelocity.x) > Mathf.Epsilon;
-
-        if (runningHorizontally)
+        // Compare current x position with the previous one to determine movement direction
+        if (transform.position.x > previousXPosition)
         {
-            transform.localScale = new Vector2(Mathf.Sign(myRigidBody2D.linearVelocity.x), 1f);
+            // Moving to the right (positive x direction)
+            spriteRenderer.flipX = false;
         }
+        else if (transform.position.x < previousXPosition)
+        {
+            // Moving to the left (negative x direction)
+            spriteRenderer.flipX = true;
+        }
+
+        // Update the previous x position for the next frame
+        previousXPosition = transform.position.x;
+    }
+
+    public void AllowFollow()
+    {
+        canFollow = true;
     }
 }

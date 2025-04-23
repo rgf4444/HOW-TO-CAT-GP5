@@ -1,42 +1,53 @@
 using UnityEngine;
-using System.Collections;
+
 public class CatTreatBehavior : MonoBehaviour
 {
-    public float boostMultiplier = 2f;    // Multiplier for speed and jump
-    public float boostDuration = 20f;     // Duration of the boost
+    public float speedBuff = 7f;
+    public float buffDuration = 20f;
+    public GameObject indicatorImage;
+    public GameObject catTreatPrefab; // Assign the prefab manually in the inspector
 
-    private Coroutine boostCoroutine;
+    private static bool isBuffActive = false;
+    private static float originalRunSpeed;
+    private static float originalJumpSpeed;
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag("Player"))
+        if (collision.CompareTag("Player") && !isBuffActive)
         {
-            PlayerMovements player = other.GetComponent<PlayerMovements>();
+            PlayerMovements player = collision.GetComponent<PlayerMovements>();
             if (player != null)
             {
-                if (boostCoroutine != null)
-                {
-                    StopCoroutine(boostCoroutine);
-                }
+                originalRunSpeed = player.runSpeed;
+                originalJumpSpeed = player.jumpSpeed;
 
-                boostCoroutine = StartCoroutine(ApplyBoost(player));
+                player.runSpeed += speedBuff;
+                player.jumpSpeed += speedBuff;
+
+                isBuffActive = true;
+                if (indicatorImage != null) indicatorImage.SetActive(true);
+
+                player.StartCoroutine(RemoveBuffAfterDuration(player));
+                CatTreatSpawner.instance.SpawnCatTreat(transform.position, 5f);
+
                 Destroy(gameObject);
             }
         }
     }
 
-    private IEnumerator ApplyBoost(PlayerMovements player)
+    private System.Collections.IEnumerator RemoveBuffAfterDuration(PlayerMovements player)
     {
+        yield return new WaitForSeconds(buffDuration);
+        player.runSpeed = originalRunSpeed;
+        player.jumpSpeed = originalJumpSpeed;
+        if (indicatorImage != null) indicatorImage.SetActive(false);
+        isBuffActive = false;
+    }
 
-        float originalSpeed = player.runSpeed;
-        float originalJumpForce = player.jumpSpeed;
-
-        player.runSpeed *= boostMultiplier;
-        player.jumpSpeed *= boostMultiplier;
-
-        yield return new WaitForSeconds(boostDuration);
-
-        player.runSpeed = originalSpeed;
-        player.jumpSpeed = originalJumpForce;
+    private System.Collections.IEnumerator RespawnCatTreat(Vector3 position)
+    {
+        yield return new WaitForSeconds(5f);
+        Instantiate(catTreatPrefab, position, Quaternion.identity);
     }
 }
+
