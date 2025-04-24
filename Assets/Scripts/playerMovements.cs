@@ -117,7 +117,7 @@ public class PlayerMovements : MonoBehaviour
     public void Meow()
     {
         if (meowClips.Length == 0 || meowAudioSource == null) return;
-        AudioClip clip = (Random.value <= .05f && meowClips.Length > 1)
+        AudioClip clip = (Random.value <= .075f && meowClips.Length > 1)
             ? meowClips[0]
             : meowClips[Random.Range(1, meowClips.Length)];
         meowAudioSource.PlayOneShot(clip);

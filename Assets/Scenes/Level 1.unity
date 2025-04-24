@@ -79928,6 +79928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 465127831}
+  playerMovement: {fileID: 1376777278}
 --- !u!1 &511691121
 GameObject:
   m_ObjectHideFlags: 0
@@ -82660,7 +82661,7 @@ Transform:
   m_GameObject: {fileID: 1184401315}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 37.68, y: 1.74, z: 0}
+  m_LocalPosition: {x: 37.68, y: 1.68, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -82678,7 +82679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a41aef2e53be444bb81896eb4328a76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneIndexToLoad: 1
+  sceneIndexToLoad: 3
 --- !u!1 &1196225479 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5588225885495532386, guid: eef82408bbb252d428c7bcc9119f622d, type: 3}
@@ -98111,11 +98112,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.52774
+      value: -21.529995
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -30.15005
+      value: -30.15001
       objectReference: {fileID: 0}
     - target: {fileID: 6266795269682252248, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x
