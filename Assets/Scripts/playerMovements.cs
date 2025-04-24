@@ -19,12 +19,9 @@ public class PlayerMovements : MonoBehaviour
     float startingGravityScale;
     [SerializeField] private float climbSpeed = 5f;
     private bool isClimbing = false;
-
     private bool isCrouching = false;
-
     public bool IsMeowing => isMeowing;
     private bool isMeowing = false;
-
     [SerializeField] private CapsuleCollider2D crouchCollider;
     [SerializeField] private Transform ceilingCheck;
     [SerializeField] private float ceilingCheckRadius = 0.2f;
@@ -36,26 +33,22 @@ public class PlayerMovements : MonoBehaviour
         myRigidBody2D = GetComponent<Rigidbody2D>();
         myCapCollider2D = GetComponent<BoxCollider2D>();
         myAnimator = GetComponent<Animator>();
-
         startingGravityScale = myRigidBody2D.gravityScale;
-
         if (crouchCollider != null) crouchCollider.enabled = false;
     }
 
     void Update()
     {
-        Crouch(); //  Evaluate crouch status first
+        if (Time.timeScale == 0f) return;
 
-        Climb();  //  Updates isClimbing properly now
+        Crouch();
+        Climb();
 
         if (!isClimbing && !isCrouching)
         {
             Run();
-
             if (Input.GetButtonDown("Fire1"))
-            {
                 Attack();
-            }
         }
         else if (!isClimbing && isCrouching)
         {
@@ -63,40 +56,28 @@ public class PlayerMovements : MonoBehaviour
         }
 
         if (!isCrouching)
-        {
             Jump();
-        }
 
         if (Input.GetKeyDown(KeyCode.E) && !isMeowing)
-        {
             Meow();
-        }
     }
 
     private void Climb()
     {
         bool touchingClimb = myCapCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing"));
-
         if (touchingClimb)
         {
             isClimbing = true;
-
-            // Get player input for both axes
-            float verticalInput = Input.GetAxis("Vertical");
-            float horizontalInput = Input.GetAxisRaw("Horizontal");
-
-            Vector2 climbingVelocity = new Vector2(horizontalInput * runSpeed, verticalInput * climbSpeed);
-            myRigidBody2D.linearVelocity = climbingVelocity;
-
+            float v = Input.GetAxis("Vertical");
+            float h = Input.GetAxisRaw("Horizontal");
+            myRigidBody2D.linearVelocity = new Vector2(h * runSpeed, v * climbSpeed);
             myAnimator.SetBool("Climbing", true);
             myRigidBody2D.gravityScale = 0f;
-
-            myAnimator.speed = Mathf.Approximately(verticalInput, 0f) && Mathf.Approximately(horizontalInput, 0f) ? 0f : 1f;
+            myAnimator.speed = (Mathf.Approximately(v,0f) && Mathf.Approximately(h,0f)) ? 0f : 1f;
         }
         else
         {
             isClimbing = false;
-
             myAnimator.SetBool("Climbing", false);
             myRigidBody2D.gravityScale = startingGravityScale;
             myAnimator.speed = 1f;
@@ -106,74 +87,41 @@ public class PlayerMovements : MonoBehaviour
     private void Jump()
     {
         bool isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
         if (!isGrounded) return;
-
         if (Input.GetButtonDown("Jump"))
-        {
             myRigidBody2D.linearVelocity = new Vector2(myRigidBody2D.linearVelocity.x, jumpSpeed);
-        }
     }
 
     private void Run()
     {
         float controlThrow = Input.GetAxisRaw("Horizontal");
-
         if (isCrouching)
         {
-            float crouchSpeed = runSpeed * crouchSpeedMultiplier;
-            Vector2 crouchVelocity = new Vector2(controlThrow * crouchSpeed, myRigidBody2D.linearVelocity.y);
-            myRigidBody2D.linearVelocity = crouchVelocity;
-
-            bool isMovingCrouched = Mathf.Abs(controlThrow) > Mathf.Epsilon;
-            myAnimator.speed = isMovingCrouched ? 1f : 0f;
-
-            FlipSprite(); // Allow flipping while crouching
+            float cs = runSpeed * crouchSpeedMultiplier;
+            myRigidBody2D.linearVelocity = new Vector2(controlThrow * cs, myRigidBody2D.linearVelocity.y);
+            myAnimator.speed = Mathf.Abs(controlThrow) > Mathf.Epsilon ? 1f : 0f;
+            FlipSprite();
             return;
         }
-
-        Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody2D.linearVelocity.y);
-        myRigidBody2D.linearVelocity = playerVelocity;
-
+        myRigidBody2D.linearVelocity = new Vector2(controlThrow * runSpeed, myRigidBody2D.linearVelocity.y);
         FlipSprite();
-        ChangingToRunningState();
-
-        void ChangingToRunningState()
-        {
-            bool runningHorizontally = Mathf.Abs(myRigidBody2D.linearVelocity.x) > Mathf.Epsilon;
-            myAnimator.SetBool("Running", runningHorizontally);
-        }
+        myAnimator.SetBool("Running", Mathf.Abs(myRigidBody2D.linearVelocity.x) > Mathf.Epsilon);
     }
 
     private void FlipSprite()
     {
-        bool runningHorizontally = Mathf.Abs(myRigidBody2D.linearVelocity.x) > Mathf.Epsilon;
-
-        if (runningHorizontally)
-        {
+        if (Mathf.Abs(myRigidBody2D.linearVelocity.x) > Mathf.Epsilon)
             transform.localScale = new Vector2(Mathf.Sign(myRigidBody2D.linearVelocity.x), 1f);
-        }
     }
 
     public void Meow()
     {
-        if (meowClips.Length == 0 || meowAudioSource == null)
-            return;
-
-        AudioClip selectedClip;
-
-        if (Random.value <= .05f && meowClips.Length > 1)
-        {
-            selectedClip = meowClips[0]; // Rare meow
-        }
-        else
-        {
-            int randomIndex = Random.Range(1, meowClips.Length);
-            selectedClip = meowClips[randomIndex];
-        }
-
-        meowAudioSource.PlayOneShot(selectedClip);
-        StartCoroutine(WaitUntilMeowEnds(selectedClip.length));
+        if (meowClips.Length == 0 || meowAudioSource == null) return;
+        AudioClip clip = (Random.value <= .05f && meowClips.Length > 1)
+            ? meowClips[0]
+            : meowClips[Random.Range(1, meowClips.Length)];
+        meowAudioSource.PlayOneShot(clip);
+        StartCoroutine(WaitUntilMeowEnds(clip.length));
     }
 
     private System.Collections.IEnumerator WaitUntilMeowEnds(float duration)
@@ -185,86 +133,40 @@ public class PlayerMovements : MonoBehaviour
 
     public void Attack()
     {
-        /**f (isClimbing)
-        {
-            myAnimator.ResetTrigger("Attacking"); // ensure it's not stuck
-            return;
-        }**/
-
-        if (myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack")) return; // Prevent spamming attacks
-
+        if (myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Attack")) return;
         myAnimator.SetTrigger("Attacking");
+        if (swipe != null) meowAudioSource.PlayOneShot(swipe);
 
-        if (swipe != null)
-            meowAudioSource.PlayOneShot(swipe);
+        foreach (var lever in Physics2D.OverlapCircleAll(hurtBox.position, attackRadius, LayerMask.GetMask("Lever")))
+            if (lever.TryGetComponent<Lever>(out var ls)) ls.FlipSprite();
 
-        Collider2D[] leversToHit = Physics2D.OverlapCircleAll(hurtBox.position, attackRadius, LayerMask.GetMask("Lever"));
-
-        foreach (Collider2D lever in leversToHit)
-        {
-            Lever leverScript = lever.GetComponent<Lever>();
-            if (leverScript != null)
-            {
-                leverScript.FlipSprite();
-            }
-        }
-
-        Collider2D[] breakables = Physics2D.OverlapCircleAll(hurtBox.position, attackRadius, LayerMask.GetMask("Breakable"));
-
-        foreach (Collider2D trash in breakables)
-        {
-            TrashcanInteraction trashcanScript = trash.GetComponent<TrashcanInteraction>();
-            if (trashcanScript != null)
-            {
-                trashcanScript.TakeHit();
-            }
-        }
-
+        foreach (var b in Physics2D.OverlapCircleAll(hurtBox.position, attackRadius, LayerMask.GetMask("Breakable")))
+            if (b.TryGetComponent<TrashcanInteraction>(out var ts)) ts.TakeHit();
     }
-
-
 
     private void Crouch()
     {
+        if (isClimbing) { ResetCrouch(); return; }
         bool hasCeiling = Physics2D.OverlapCircle(ceilingCheck.position, ceilingCheckRadius, ceilingLayer);
-
-        if (isClimbing)
-        {
-            ResetCrouch();
-            return;
-        }
-
-        // Hold crouch if the player pressed Left Shift or there's a ceiling
-        bool wantsToCrouch = Input.GetKey(KeyCode.LeftShift) || hasCeiling;
-
-        isCrouching = wantsToCrouch;
-
-        myCapCollider2D.enabled = !isCrouching;
-        if (crouchCollider != null)
-            crouchCollider.enabled = isCrouching;
-
-        myAnimator.SetBool("Crouching", isCrouching);
+        bool wants = Input.GetKey(KeyCode.LeftShift) || hasCeiling;
+        isCrouching = wants;
+        myCapCollider2D.enabled = !wants;
+        if (crouchCollider != null) crouchCollider.enabled = wants;
+        myAnimator.SetBool("Crouching", wants);
     }
 
     private void ResetCrouch()
     {
         isCrouching = false;
-
         myCapCollider2D.enabled = true;
-        if (crouchCollider != null)
-            crouchCollider.enabled = false;
-
+        if (crouchCollider != null) crouchCollider.enabled = false;
         myAnimator.SetBool("Crouching", false);
         myAnimator.speed = 1f;
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (hurtBox != null)
-        {
-            Gizmos.DrawWireSphere(hurtBox.position, attackRadius);
-        }
-
+        if (hurtBox != null) Gizmos.DrawWireSphere(hurtBox.position, attackRadius);
         if (groundCheck != null)
         {
             Gizmos.color = Color.green;
@@ -275,6 +177,5 @@ public class PlayerMovements : MonoBehaviour
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(ceilingCheck.position, ceilingCheckRadius);
         }
-
     }
 }

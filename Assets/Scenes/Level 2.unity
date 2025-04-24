@@ -634,6 +634,7 @@ GameObject:
   - component: {fileID: 93401788}
   - component: {fileID: 93401787}
   - component: {fileID: 93401786}
+  - component: {fileID: 93401789}
   m_Layer: 5
   m_Name: Pause Button
   m_TagString: Untagged
@@ -766,6 +767,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 93401784}
   m_CullTransparentMesh: 1
+--- !u!114 &93401789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 93401784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3214081d2ccd01a45b86f3603ab628c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseMenu: {fileID: 465127831}
+  pauseButton: {fileID: 93401784}
+  playerMovement: {fileID: 1376777278}
 --- !u!114 &107483818 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6274636159492397435, guid: 5a29a4d0669f7164c9aeabd77d8d731d, type: 3}
@@ -80322,6 +80338,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 465127831}
+  pauseButton: {fileID: 0}
+  playerMovement: {fileID: 0}
 --- !u!1 &511691121
 GameObject:
   m_ObjectHideFlags: 0
@@ -98750,11 +98768,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.527876
+      value: -21.52786
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -32.00008
+      value: -32.00007
       objectReference: {fileID: 0}
     - target: {fileID: 6266795269682252248, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x
