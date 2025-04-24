@@ -1,49 +1,49 @@
 using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D))]
 public class RatBehavior : MonoBehaviour
 {
-    public Transform player; // Assign this in the Inspector or dynamically
+    public Transform player; // Assign in Inspector
+    public float followSpeed = 2f; // Speed of rat movement
+    public float stopDistance = 0.1f; // Distance threshold before stopping
     public bool playerInRange = false;
     public bool canFollow = false;
 
+    private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
-    private float previousXPosition; // To store previous position for movement direction
 
     private void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        previousXPosition = transform.position.x; // Initial x position
     }
 
-    void Update()
+    private void FixedUpdate()
     {
         if (playerInRange && canFollow)
         {
-            // Follow player on x-axis
-            Vector3 newPosition = transform.position;
-            newPosition.x = player.position.x;
-            transform.position = newPosition;
+            float direction = player.position.x - transform.position.x;
 
-            // Check movement direction and flip sprite accordingly
-            FlipSprite();
+            // Move only if the rat isn't very close to the player
+            if (Mathf.Abs(direction) > stopDistance)
+            {
+                float moveDir = Mathf.Sign(direction); // +1 or -1
+                rb.linearVelocity = new Vector2(moveDir * followSpeed, rb.linearVelocity.y);
+
+                // Flip sprite based on direction
+                spriteRenderer.flipX = moveDir < 0;
+            }
+            else
+            {
+                // Stop horizontal movement when close
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
         }
-    }
-
-    private void FlipSprite()
-    {
-        // Compare current x position with the previous one to determine movement direction
-        if (transform.position.x > previousXPosition)
+        else
         {
-            // Moving to the right (positive x direction)
-            spriteRenderer.flipX = false;
+            // If not following, maintain vertical velocity (e.g., gravity)
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         }
-        else if (transform.position.x < previousXPosition)
-        {
-            // Moving to the left (negative x direction)
-            spriteRenderer.flipX = true;
-        }
-
-        // Update the previous x position for the next frame
-        previousXPosition = transform.position.x;
     }
 
     public void AllowFollow()
