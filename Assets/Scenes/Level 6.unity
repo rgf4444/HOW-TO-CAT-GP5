@@ -80323,7 +80323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 465127831}
-  playerMovement: {fileID: 0}
+  playerMovement: {fileID: 1376777278}
 --- !u!1 &487512746
 GameObject:
   m_ObjectHideFlags: 0
@@ -80941,7 +80941,7 @@ MonoBehaviour:
   feedbackText: {fileID: 1301632231}
   correctPassword: TOXOPLASMOSIS
   doorLockPanel: {fileID: 1561538432}
-  doorCollider: {fileID: 0}
+  doorCollider: {fileID: 1260367545}
 --- !u!1 &561536365
 GameObject:
   m_ObjectHideFlags: 0
@@ -84745,6 +84745,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1231361291}
   m_CullTransparentMesh: 1
+--- !u!61 &1260367545 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 2384215711621398937, guid: 38eb2cf3c8850b74585521a11f95fd82, type: 3}
+  m_PrefabInstance: {fileID: 584845957432009057}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1277376115
 GameObject:
   m_ObjectHideFlags: 0
@@ -123944,7 +123949,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2384215711621398937, guid: 38eb2cf3c8850b74585521a11f95fd82, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5870364917140762612, guid: 38eb2cf3c8850b74585521a11f95fd82, type: 3}
       propertyPath: sceneIndexToLoad
@@ -124744,11 +124749,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.864369
+      value: -10.855462
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -11.39612
+      value: -11.39609
       objectReference: {fileID: 0}
     - target: {fileID: 6266795269682252248, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x

@@ -2,52 +2,50 @@ using UnityEngine;
 
 public class CatTreatBehavior : MonoBehaviour
 {
-    public float speedBuff = 7f;
-    public float buffDuration = 20f;
-    public GameObject indicatorImage;
-    public GameObject catTreatPrefab; // Assign the prefab manually in the inspector
+    [SerializeField] private float bonusAmount = 7f;
+    [SerializeField] private float buffDuration = 20f;  
 
-    private static bool isBuffActive = false;
-    private static float originalRunSpeed;
-    private static float originalJumpSpeed;
+    private Collider2D col;
+    private SpriteRenderer sr;
+    private bool isBuffActive = false;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void Awake()
     {
-        if (collision.CompareTag("Player") && !isBuffActive)
+        col = GetComponent<Collider2D>();
+        sr = GetComponent<SpriteRenderer>();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
         {
-            PlayerMovements player = collision.GetComponent<PlayerMovements>();
-            if (player != null)
+            PlayerMovements player = other.GetComponent<PlayerMovements>();
+            if (player != null && !isBuffActive)
             {
-                originalRunSpeed = player.runSpeed;
-                originalJumpSpeed = player.jumpSpeed;
-
-                player.runSpeed += speedBuff;
-                player.jumpSpeed += speedBuff;
-
-                isBuffActive = true;
-                if (indicatorImage != null) indicatorImage.SetActive(true);
-
-                player.StartCoroutine(RemoveBuffAfterDuration(player));
-                CatTreatSpawner.instance.SpawnCatTreat(transform.position, 5f);
-
-                Destroy(gameObject);
+                StartCoroutine(ApplyTemporaryBuff(player));
             }
+
+            col.enabled = false;
+            sr.enabled = false;
         }
     }
 
-    private System.Collections.IEnumerator RemoveBuffAfterDuration(PlayerMovements player)
+    private System.Collections.IEnumerator ApplyTemporaryBuff(PlayerMovements player)
     {
+        isBuffActive = true;
+
+        player.runSpeed += bonusAmount;
+        player.jumpSpeed += bonusAmount;
+
         yield return new WaitForSeconds(buffDuration);
-        player.runSpeed = originalRunSpeed;
-        player.jumpSpeed = originalJumpSpeed;
-        if (indicatorImage != null) indicatorImage.SetActive(false);
+
+        player.runSpeed -= bonusAmount;
+        player.jumpSpeed -= bonusAmount;
+
+        col.enabled = true;
+        sr.enabled = true;
         isBuffActive = false;
     }
-
-    private System.Collections.IEnumerator RespawnCatTreat(Vector3 position)
-    {
-        yield return new WaitForSeconds(5f);
-        Instantiate(catTreatPrefab, position, Quaternion.identity);
-    }
 }
+
 

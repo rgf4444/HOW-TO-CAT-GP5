@@ -80424,7 +80424,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 465127831}
-  playerMovement: {fileID: 0}
+  playerMovement: {fileID: 1376777278}
 --- !u!1 &511691121
 GameObject:
   m_ObjectHideFlags: 0
@@ -99272,7 +99272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.510101
+      value: -21.505651
       objectReference: {fileID: 0}
     - target: {fileID: 2664244533120601479, guid: c82d1b95bdd5ae848acab47d3287d2ec, type: 3}
       propertyPath: m_LocalPosition.y
